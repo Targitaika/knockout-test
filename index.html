@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документы</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Документы</h1>
+        <div class="buttons">
+            <button id="bookmark">Закладка</button>
+            <button id="newType">Новый тип</button>
+            <button id="newDocument">Новый документ</button>
+        </div>
+    </header>
+    <div class="search">
+        <input type="text" id="searchInput" placeholder="Поиск">
+        <button id="resetSearch" hidden>✖</button>
+    </div>
+    <div id="categories" data-bind="foreach: categories">
+        <div class="category" data-bind="attr: { id: 'category-' + $index() }, event: { click: $root.toggleCategory }, draggable: true, event: { dragstart: $root.dragStart, dragover: $root.dragOver, drop: $root.dropCategory }">
+            <h2 data-bind="text: name"></h2>
+            <div class="items" data-bind="visible: isVisible, foreach: items">
+                <div class="item" data-bind="text: name, draggable: true, event: { dragstart: $root.dragStart, dragover: $root.dragOver, drop: $root.dropItem }"></div>
+                <div class="item-buttons">
+                    <button data-bind="click: $root.editItem">Редактировать</button>
+                    <button data-bind="click: $root.deleteItem">Удалить</button>
+                    <button data-bind="click: $root.startDragItem">Переместить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
