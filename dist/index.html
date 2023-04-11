@@ -2,39 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Документы</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Knockout.js Drag and Drop</title>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>Документы</h1>
-        <div class="buttons">
-            <button id="bookmark">Закладка</button>
-            <button id="newType">Новый тип</button>
-            <button id="newDocument">Новый документ</button>
-        </div>
-    </header>
-    <div class="search">
-        <input type="text" id="searchInput" placeholder="Поиск">
-        <button id="resetSearch" hidden>✖</button>
-    </div>
-    <div id="categories" data-bind="foreach: categories">
-        <div class="category" data-bind="attr: { id: 'category-' + $index() }, event: { click: $root.toggleCategory }, draggable: true, event: { dragstart: $root.dragStart, dragover: $root.dragOver, drop: $root.dropCategory }">
-            <h2 data-bind="text: name"></h2>
-            <div class="items" data-bind="visible: isVisible, foreach: items">
-                <div class="item" data-bind="text: name, draggable: true, event: { dragstart: $root.dragStart, dragover: $root.dragOver, drop: $root.dropItem }"></div>
-                <div class="item-buttons">
-                    <button data-bind="click: $root.editItem">Редактировать</button>
-                    <button data-bind="click: $root.deleteItem">Удалить</button>
-                    <button data-bind="click: $root.startDragItem">Переместить</button>
-                </div>
+<div data-bind="foreach: categories">
+    <!-- Категории -->
+    <div draggable="true"
+         data-bind="ondragstart: $root.startDragging.bind($root, $data), ondragover: $root.allowDrop.bind($root, $data), ondrop: $root.drop.bind($root, $data)">
+
+        <h3 data-bind="text: name"></h3>
+        <button data-bind="click: $root.changeContent.bind($root, $data)">Change</button>
+        <button data-bind="click: $root.deleteCategory.bind($root, $data)">Delete</button>
+        <button data-bind="click: $root.toggleDraggable.bind($root, $data), text: isDraggable() ? 'Disable Drag' : 'Drag'">
+            Drag
+        </button>
+        <!-- Элементы -->
+        <div data-bind="foreach: items">
+            <div draggable="true"
+                 data-bind="ondragstart: $root.startDragging.bind($root, $data), ondragover: $root.allowDrop.bind($root, $data), ondrop: $root.drop.bind($root, $data)">
+                <span data-bind="text: name"></span>
+                <button data-bind="click: $root.changeContent.bind($root, $data)">Change</button>
+                <button data-bind="click: $root.deleteItem.bind($root, $data)">Delete</button>
+                <button data-bind="click: $root.toggleDraggable.bind($root, $data), text: isDraggable() ? 'Disable Drag' : 'Drag'">
+                    Drag
+                </button>
             </div>
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-min.js"></script>-->
 <script src="app.js"></script>
 </body>
 </html>
