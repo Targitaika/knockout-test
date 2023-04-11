@@ -14,10 +14,12 @@
 <div class="container">
     <h1>Документы</h1>
     <!-- Категории -->
+    <input class="search-input" type="text" placeholder="Поиск" data-bind="value: searchQuery, valueUpdate: 'input'" />
+
     <div class="categories" data-bind="foreach: categories">
         <div class="category" draggable="true"
-             data-bind="ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
-            <div class="category__header">
+             data-bind="visible: $root.isMatch($data), ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
+            <div class="category__header" data-bind="click: function() { isCollapsed(!isCollapsed()) }">
                 <div class="category__name" data-bind="ifnot: isEditing">
                     <span data-bind="text: name"></span>
                 </div>
@@ -34,7 +36,7 @@
             </div>
 
             <!-- Элементы -->
-            <div class="items" data-bind="foreach: items">
+            <div class="items" data-bind="foreach: items, visible: !isCollapsed()">
                 <div class="item"
                      draggable="true"
                      data-bind="ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
@@ -61,7 +63,7 @@
     <div class="uncategorizedItems" data-bind="foreach: uncategorizedItems">
         <div class="item"
              draggable="true"
-             data-bind="ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
+             data-bind="visible: $root.isMatch($data), ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
             <div class="item__name" data-bind="ifnot: isEditing">
                 <span data-bind="text: name"></span>
             </div>

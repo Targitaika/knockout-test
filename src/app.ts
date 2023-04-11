@@ -20,6 +20,7 @@ class Category {
     isVisible: ko.Observable<boolean>;
     isEditing: ko.Observable<boolean>;
     isDraggable: ko.Observable<boolean>;
+    isCollapsed: ko.Observable<boolean>;
     parent: any;
 
     constructor(name: string) {
@@ -28,6 +29,7 @@ class Category {
         this.isVisible = ko.observable(true);
         this.isEditing = ko.observable(false);
         this.isDraggable = ko.observable(true);
+        this.isCollapsed = ko.observable(false);
         this.parent = []
     }
 }
@@ -36,6 +38,7 @@ class AppViewModel {
     categories: ko.ObservableArray<Category>;
     draggedItem: Item | Category | null;
     uncategorizedItems: ko.ObservableArray<Item>;
+    searchQuery: ko.Observable<string>;
 
     constructor() {
         const tempCategory1 = new Category('Обязательные для всех');
@@ -57,6 +60,7 @@ class AppViewModel {
             new Item("Мед. книжка", uncategorizedItems ),
         ]);
         this.draggedItem = null;
+        this.searchQuery = ko.observable('');
     }
 
     startDragging(item: Item | Category, event: DragEvent, ...arg: any) {
@@ -148,6 +152,11 @@ class AppViewModel {
         console.log('toggleDraggable', item, event);
         event.stopPropagation();
         item.isDraggable(!item.isDraggable());
+    }
+
+    isMatch(item: Item | Category): boolean {
+        const searchText = this.searchQuery().toLowerCase();
+        return item.name().toLowerCase().includes(searchText);
     }
 }
 
