@@ -30,11 +30,11 @@
                 <div class="buttons">
                     <button data-bind="click: $root.changeContent"><img src="icons/change.svg" alt="Change" width="12"
                                                                         height="12"></button>
-                    <button data-bind="click: $root.deleteCategory"><img src="icons/delete.svg" alt="Delete" width="12"
-                                                                         height="12"></button>
-                    <button data-bind="click: $root.toggleDraggable">
-                        <img src="icons/drag.svg" alt="Drag" width="12" height="12"
-                             data-bind="attr: { 'data-enabled': isDraggable() }">
+                    <button data-bind="click: $root.deleteCategory, css: { blur: items().length > 0 }"><img
+                            src="icons/delete.svg" alt="Delete" width="12"
+                            height="12"></button>
+                    <button data-bind="click: $root.toggleDraggable, css: { blur: !isDraggable() }">
+                        <img src="icons/drag.svg" alt="Drag" width="12" height="12">
                     </button>
                 </div>
             </div>
@@ -60,9 +60,8 @@
                             <img src="icons/delete.svg" alt="Delete" width="12"
                                  height="12">
                         </button>
-                        <button data-bind="click: $root.toggleDraggable">
-                            <img src="icons/drag.svg" alt="Drag" width="12" height="12"
-                                 data-bind="attr: { 'data-enabled': isDraggable() }">
+                        <button data-bind="click: $root.toggleDraggable, css: { blur: !isDraggable() }">
+                            <img src="icons/drag.svg" alt="Drag" width="12" height="12">
                         </button>
                     </div>
 
@@ -90,10 +89,10 @@
                     <img src="icons/delete.svg" alt="Delete" width="12"
                          height="12">
                 </button>
-                <button data-bind="click: $root.toggleDraggable">
+                <button data-bind="click: $root.toggleDraggable, css: { blur: !isDraggable() }">
                     <img src="icons/drag.svg" alt="Drag" width="12"
                          height="12"
-                         data-bind="attr: { 'data-enabled': isDraggable() }">
+                    >
                 </button>
             </div>
         </div>
