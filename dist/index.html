@@ -4,35 +4,79 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Knockout.js Drag and Drop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Документы</title>
 </head>
 <body>
-<div data-bind="foreach: categories">
+<div class="container">
+    <h1>Документы</h1>
     <!-- Категории -->
-    <div draggable="true"
-         data-bind="ondragstart: $root.startDragging.bind($root, $data), ondragover: $root.allowDrop.bind($root, $data), ondrop: $root.drop.bind($root, $data)">
+    <div class="categories" data-bind="foreach: categories">
+        <div class="category" draggable="true"
+             data-bind="ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
+            <div class="category__header">
+                <div class="category__name" data-bind="ifnot: isEditing">
+                    <span data-bind="text: name"></span>
+                </div>
+                <div class="category__input" data-bind="if: isEditing">
+                    <input type="text" data-bind="value: name">
+                </div>
+                <div class="buttons">
+                    <button data-bind="click: $root.changeContent">Change</button>
+                    <button data-bind="click: $root.deleteCategory">Delete</button>
+                    <button data-bind="click: $root.toggleDraggable, text: isDraggable() ? 'Disable Drag' : 'Drag'">
+                        Drag
+                    </button>
+                </div>
+            </div>
 
-        <h3 data-bind="text: name"></h3>
-        <button data-bind="click: $root.changeContent.bind($root, $data)">Change</button>
-        <button data-bind="click: $root.deleteCategory.bind($root, $data)">Delete</button>
-        <button data-bind="click: $root.toggleDraggable.bind($root, $data), text: isDraggable() ? 'Disable Drag' : 'Drag'">
-            Drag
-        </button>
-        <!-- Элементы -->
-        <div data-bind="foreach: items">
-            <div draggable="true"
-                 data-bind="ondragstart: $root.startDragging.bind($root, $data), ondragover: $root.allowDrop.bind($root, $data), ondrop: $root.drop.bind($root, $data)">
-                <span data-bind="text: name"></span>
-                <button data-bind="click: $root.changeContent.bind($root, $data)">Change</button>
-                <button data-bind="click: $root.deleteItem.bind($root, $data)">Delete</button>
-                <button data-bind="click: $root.toggleDraggable.bind($root, $data), text: isDraggable() ? 'Disable Drag' : 'Drag'">
-                    Drag
-                </button>
+            <!-- Элементы -->
+            <div class="items" data-bind="foreach: items">
+                <div class="item"
+                     draggable="true"
+                     data-bind="ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
+                    <div class="item__name" data-bind="ifnot: isEditing">
+                        <span data-bind="text: name"></span>
+                    </div>
+                    <div class="item__input" data-bind="if: isEditing">
+                        <input type="text" data-bind="value: name">
+                    </div>
+                    <div class="buttons">
+                        <button data-bind="click: $root.changeContent">Change</button>
+                        <button data-bind="click: $root.deleteItem">Delete</button>
+                        <button data-bind="click: $root.toggleDraggable, text: isDraggable() ? 'Disable Drag' : 'Drag'">
+                            Drag
+                        </button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Неотсортированные элементы -->
+    <div class="uncategorizedItems" data-bind="foreach: uncategorizedItems">
+        <div class="item"
+             draggable="true"
+             data-bind="ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
+            <div class="item__name" data-bind="ifnot: isEditing">
+                <span data-bind="text: name"></span>
+            </div>
+            <div class="item__input" data-bind="if: isEditing">
+                <input type="text" data-bind="value: name">
+            </div>
+            <div class="buttons">
+                <button data-bind="click: $root.changeContent">Change</button>
+                <button data-bind="click: $root.deleteItem">Delete</button>
+                <button data-bind="click: $root.toggleDraggable">Drag</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
 </div>
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-min.js"></script>-->
-<script src="app.js"></script>
+
 </body>
 </html>

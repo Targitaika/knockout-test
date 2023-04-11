@@ -2,11 +2,11 @@ import * as ko from 'knockout';
 
 class Item {
     name: ko.Observable<string>;
-    parent: Category;
+    parent: Category | null;
     isEditing: ko.Observable<boolean>;
     isDraggable: ko.Observable<boolean>;
 
-    constructor(name: string, parent: Category) {
+    constructor(name: string, parent: Category | null) {
         this.name = ko.observable(name);
         this.parent = parent;
         this.isEditing = ko.observable(false);
@@ -35,22 +35,31 @@ class Category {
 class AppViewModel {
     categories: ko.ObservableArray<Category>;
     draggedItem: Item | Category | null;
+    uncategorizedItems: ko.ObservableArray<Item>;
 
     constructor() {
-        const tempCategory1 = new Category('Category 1');
-        const tempCategory2 = new Category('Category 2');
+        const tempCategory1 = new Category('Обязательные для всех');
+        const tempCategory2 = new Category('Обязательные для трудоустройства');
+        const tempCategory3 = new Category('Специальные');
+        const uncategorizedItems = new Category('UncategorizedItems');
 
-        tempCategory1.items.push(new Item('Item 1.1', tempCategory1));
-        tempCategory1.items.push(new Item('Item 1.2', tempCategory1));
+        tempCategory1.items.push(new Item('Паспорт', tempCategory1));
+        tempCategory1.items.push(new Item('ИНН', tempCategory1));
 
         tempCategory2.items.push(new Item('Item 2.1', tempCategory2));
         tempCategory2.items.push(new Item('Item 2.2', tempCategory2));
 
-        this.categories = ko.observableArray([tempCategory1, tempCategory2]);
+        this.categories = ko.observableArray([tempCategory1, tempCategory2, tempCategory3]);
+
+        this.uncategorizedItems = ko.observableArray([
+            new Item("Тестовое задание кандидата", uncategorizedItems ),
+            new Item("Трудовой договор", uncategorizedItems ),
+            new Item("Мед. книжка", uncategorizedItems ),
+        ]);
         this.draggedItem = null;
     }
 
-    startDragging(item: Item | Category, event: DragEvent, ...arg:any) {
+    startDragging(item: Item | Category, event: DragEvent, ...arg: any) {
         console.log('startDragging', event, arg)
         event.dataTransfer!.setData('application/json', JSON.stringify(item));
         event.dataTransfer!.effectAllowed = 'move';
@@ -89,7 +98,7 @@ class AppViewModel {
                 ? this.categories().indexOf(this.draggedItem as Category)
                 : this.draggedItem!.parent.items().indexOf(this.draggedItem as Item);
         } else {
-            targetIndex = target.parent.items().indexOf(target);
+            targetIndex = target.parent!.items().indexOf(target);
             draggedIndex = this.draggedItem!.parent.items().indexOf(this.draggedItem);
         }
 
@@ -109,19 +118,19 @@ class AppViewModel {
                 this.draggedItem!.parent = target as Category;
             }
         } else {
-            target.parent.items.splice(targetIndex, 0, this.draggedItem as Item);
+            target.parent!.items.splice(targetIndex, 0, this.draggedItem as Item);
             this.draggedItem!.parent = target.parent;
         }
 
         this.draggedItem = null;
     }
 
-    changeContent(item: Item | Category, _: any, event: MouseEvent) {
+    changeContent(item: Item | Category, event: MouseEvent) {
         event.stopPropagation();
         item.isEditing(!item.isEditing());
     }
 
-    deleteCategory(category: Category, _: any, event: MouseEvent) {
+    deleteCategory(category: Category, event: MouseEvent) {
         console.log(event);
         event.stopPropagation();
         if (category.items().length === 0) {
@@ -129,13 +138,14 @@ class AppViewModel {
         }
     }
 
-    // @ts-ignore
-    deleteItem(item: Item, _: any, event: MouseEvent) {
+    deleteItem(item: Item, event: MouseEvent) {
         event.stopPropagation();
-        item.parent.items.remove(item);
+        console.log(item)
+        item.parent!.items.remove(item);
     }
 
-    toggleDraggable(item: Item | Category, _: any, event: MouseEvent) {
+    toggleDraggable(item: Item | Category, event: MouseEvent) {
+        console.log('toggleDraggable', item, event);
         event.stopPropagation();
         item.isDraggable(!item.isDraggable());
     }
