@@ -40,6 +40,7 @@ class AppViewModel {
     uncategorizedItems: ko.ObservableArray<Item>;
     searchQuery: ko.Observable<string>;
 
+
     constructor() {
         const tempCategory1 = new Category('Обязательные для всех');
         const tempCategory2 = new Category('Обязательные для трудоустройства');
@@ -50,20 +51,25 @@ class AppViewModel {
         tempCategory1.items.push(new Item('ИНН', tempCategory1));
 
         tempCategory2.items.push(new Item('Item 2.1', tempCategory2));
-        tempCategory2.items.push(new Item('Item 2.2', tempCategory2));
+        //
+        // uncategorizedItems.items.push(new Item("Тестовое задание кандидата", uncategorizedItems));
+        // uncategorizedItems.items.push(new Item("Трудовой договор", uncategorizedItems));
+        // uncategorizedItems.items.push(new Item("Мед. книжка", uncategorizedItems));
+
+        // console.log('contstructor', this.categories.remove);
+        this.uncategorizedItems = ko.observableArray([
+            new Item("Тестовое задание кандидата", uncategorizedItems),
+            new Item("Трудовой договор", uncategorizedItems),
+            new Item("Мед. книжка", uncategorizedItems),
+        ]);
 
         this.categories = ko.observableArray([tempCategory1, tempCategory2, tempCategory3]);
 
-        this.uncategorizedItems = ko.observableArray([
-            new Item("Тестовое задание кандидата", uncategorizedItems ),
-            new Item("Трудовой договор", uncategorizedItems ),
-            new Item("Мед. книжка", uncategorizedItems ),
-        ]);
         this.draggedItem = null;
         this.searchQuery = ko.observable('');
     }
 
-    startDragging(item: Item | Category, event: DragEvent, ...arg: any) {
+    startDragging = (item: Item | Category, event: DragEvent, ...arg: any) => {
         console.log('startDragging', event, arg)
         event.dataTransfer!.setData('application/json', JSON.stringify(item));
         event.dataTransfer!.effectAllowed = 'move';
@@ -71,14 +77,14 @@ class AppViewModel {
         this.draggedItem = item;
     }
 
-    allowDrop(item: Item | Category, event: DragEvent) {
+    allowDrop = (item: Item | Category, event: DragEvent) => {
         console.log('allowDrop')
 
         event.preventDefault();
         event.dataTransfer!.dropEffect = 'move';
     }
 
-    drop(target: Item | Category, event: DragEvent, ...arg: any) {
+    drop = (target: Item | Category, event: DragEvent, ...arg: any) => {
         console.log('drop', event, arg);
         event.preventDefault();
 
@@ -129,32 +135,37 @@ class AppViewModel {
         this.draggedItem = null;
     }
 
-    changeContent(item: Item | Category, event: MouseEvent) {
+    changeContent = (item: Item | Category, event: MouseEvent) => {
         event.stopPropagation();
         item.isEditing(!item.isEditing());
     }
 
-    deleteCategory(category: Category, event: MouseEvent) {
-        console.log(event);
+    deleteCategory = (category: Category, event: MouseEvent) => {
+        console.log(category);
+        console.log('categories', this.categories)
         event.stopPropagation();
         if (category.items().length === 0) {
             this.categories.remove(category);
         }
     }
 
-    deleteItem(item: Item, event: MouseEvent) {
+    deleteItem = (item: Item, event: MouseEvent) => {
+        console.log('deleteItem', item, event)
         event.stopPropagation();
-        console.log(item)
-        item.parent!.items.remove(item);
+        if (item.parent!.name() === 'UncategorizedItems') {
+            this.uncategorizedItems.remove(item);
+        } else {
+            item.parent!.items.remove(item);
+        }
     }
 
-    toggleDraggable(item: Item | Category, event: MouseEvent) {
+    toggleDraggable = (item: Item | Category, event: MouseEvent) => {
         console.log('toggleDraggable', item, event);
         event.stopPropagation();
         item.isDraggable(!item.isDraggable());
     }
 
-    isMatch(item: Item | Category): boolean {
+    isMatch = (item: Item | Category): boolean => {
         const searchText = this.searchQuery().toLowerCase();
         return item.name().toLowerCase().includes(searchText);
     }

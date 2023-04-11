@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;1,400;1,500&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <title>Документы</title>
 </head>
@@ -14,7 +15,7 @@
 <div class="container">
     <h1>Документы</h1>
     <!-- Категории -->
-    <input class="search-input" type="text" placeholder="Поиск" data-bind="value: searchQuery, valueUpdate: 'input'" />
+    <input class="search-input" type="text" placeholder="Поиск" data-bind="value: searchQuery, valueUpdate: 'input'"/>
 
     <div class="categories" data-bind="foreach: categories">
         <div class="category" draggable="true"
@@ -27,10 +28,13 @@
                     <input type="text" data-bind="value: name">
                 </div>
                 <div class="buttons">
-                    <button data-bind="click: $root.changeContent">Change</button>
-                    <button data-bind="click: $root.deleteCategory">Delete</button>
-                    <button data-bind="click: $root.toggleDraggable, text: isDraggable() ? 'Disable Drag' : 'Drag'">
-                        Drag
+                    <button data-bind="click: $root.changeContent"><img src="icons/change.svg" alt="Change" width="12"
+                                                                        height="12"></button>
+                    <button data-bind="click: $root.deleteCategory"><img src="icons/delete.svg" alt="Delete" width="12"
+                                                                         height="12"></button>
+                    <button data-bind="click: $root.toggleDraggable">
+                        <img src="icons/drag.svg" alt="Drag" width="12" height="12"
+                             data-bind="attr: { 'data-enabled': isDraggable() }">
                     </button>
                 </div>
             </div>
@@ -47,10 +51,18 @@
                         <input type="text" data-bind="value: name">
                     </div>
                     <div class="buttons">
-                        <button data-bind="click: $root.changeContent">Change</button>
-                        <button data-bind="click: $root.deleteItem">Delete</button>
-                        <button data-bind="click: $root.toggleDraggable, text: isDraggable() ? 'Disable Drag' : 'Drag'">
-                            Drag
+                        <button data-bind="click: $root.changeContent">
+                            <img src="icons/change.svg" alt="Change"
+                                 width="12"
+                                 height="12">
+                        </button>
+                        <button data-bind="click: $root.deleteItem">
+                            <img src="icons/delete.svg" alt="Delete" width="12"
+                                 height="12">
+                        </button>
+                        <button data-bind="click: $root.toggleDraggable">
+                            <img src="icons/drag.svg" alt="Drag" width="12" height="12"
+                                 data-bind="attr: { 'data-enabled': isDraggable() }">
                         </button>
                     </div>
 
@@ -71,9 +83,18 @@
                 <input type="text" data-bind="value: name">
             </div>
             <div class="buttons">
-                <button data-bind="click: $root.changeContent">Change</button>
-                <button data-bind="click: $root.deleteItem">Delete</button>
-                <button data-bind="click: $root.toggleDraggable">Drag</button>
+                <button data-bind="click: $root.changeContent">
+                    <img src="icons/change.svg" alt="Change" width="12"
+                         height="12"></button>
+                <button data-bind="click: $root.deleteItem">
+                    <img src="icons/delete.svg" alt="Delete" width="12"
+                         height="12">
+                </button>
+                <button data-bind="click: $root.toggleDraggable">
+                    <img src="icons/drag.svg" alt="Drag" width="12"
+                         height="12"
+                         data-bind="attr: { 'data-enabled': isDraggable() }">
+                </button>
             </div>
         </div>
     </div>
