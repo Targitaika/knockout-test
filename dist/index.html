@@ -28,11 +28,11 @@
                     <input type="text" data-bind="value: name">
                 </div>
                 <div class="buttons">
-                    <button data-bind="click: $root.changeContent"><img src="icons/change.svg" alt="Change" width="12"
-                                                                        height="12"></button>
-                    <button data-bind="click: $root.deleteCategory, css: { blur: items().length > 0 }"><img
-                            src="icons/delete.svg" alt="Delete" width="12"
-                            height="12"></button>
+                    <button data-bind="click: $root.changeContent">
+                        <img src="icons/change.svg" alt="Change" width="12" height="12"></button>
+                    <button data-bind="click: $root.deleteCategory, css: { blur: items().length > 0 }">
+                        <img src="icons/delete.svg" alt="Delete" width="12" height="12">
+                    </button>
                     <button data-bind="click: $root.toggleDraggable, css: { blur: !isDraggable() }">
                         <img src="icons/drag.svg" alt="Drag" width="12" height="12">
                     </button>
@@ -52,13 +52,10 @@
                     </div>
                     <div class="buttons">
                         <button data-bind="click: $root.changeContent">
-                            <img src="icons/change.svg" alt="Change"
-                                 width="12"
-                                 height="12">
+                            <img src="icons/change.svg" alt="Change" width="12" height="12">
                         </button>
                         <button data-bind="click: $root.deleteItem">
-                            <img src="icons/delete.svg" alt="Delete" width="12"
-                                 height="12">
+                            <img src="icons/delete.svg" alt="Delete" width="12" height="12">
                         </button>
                         <button data-bind="click: $root.toggleDraggable, css: { blur: !isDraggable() }">
                             <img src="icons/drag.svg" alt="Drag" width="12" height="12">
