@@ -54,7 +54,7 @@ class AppViewModel {
         const tempCategory1 = new Category('Обязательные для всех', 'Документы, обязательные для всех сотрудников без исключения', 1);
         const tempCategory2 = new Category('Обязательные для трудоустройства', 'Документы, без которых невозможно трудоустройство человека на какую бы то ни было должность в компании вне зависимости от граж', 2);
         const tempCategory3 = new Category('Специальные', '', 3);
-        const uncategorizedItems = new Category('UncategorizedItems', '', 4);
+        const uncategorizedItems = new Category('UncategorizedItems', '', 0);
 
         tempCategory1.items.push(new Item('Паспорт', tempCategory1.id));
         tempCategory1.items.push(new Item('ИНН', tempCategory1.id));
@@ -98,14 +98,14 @@ class AppViewModel {
     }
 
     deleteItem = (item: Item, event: MouseEvent) => {
-        console.log('deleteItem', item, event)
         event.stopPropagation();
         if (item.parentId === 0) {
             this.uncategorizedItems.remove(item);
         } else {
             this.findCategoryById(item.parentId)!.items.remove(item);
         }
-    }
+        event.target && (event.target as HTMLElement).closest('.item')?.remove();
+    };
 
     toggleDraggable = (item: Item | Category, event: MouseEvent) => {
         event.stopPropagation();
