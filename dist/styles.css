@@ -11,17 +11,21 @@ body {
 
 .container {
     max-width: 1190px;
-    padding: 30px 38px;
+    padding: 17px 22px;
     box-sizing: border-box;
 }
 
 h1 {
     font-weight: 500;
     font-size: 22px;
-    margin-bottom: 29px;
+    margin-bottom: 20px;
 }
 
-.search-input {
+.search {
+    position: relative;
+}
+
+.search__input {
     font-size: 15px;
     border: none;
     border-bottom: 1px solid #BFC9E0;
@@ -29,12 +33,24 @@ h1 {
     display: block;
     width: 100%;
     max-width: 564px;
-    margin-bottom: 19px;
+    margin-bottom: 20px;
     outline: none;
 }
 
-.search-input:focus {
+.search__input:focus {
     border-bottom-color: #0066FF;
+}
+
+.search::before {
+    content: '';
+    background-image: url('icons/search.svg');
+    width: 17px;
+    height: 17px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    left: 1px;
+    top: 12px;
 }
 
 .category {
@@ -47,8 +63,27 @@ h1 {
     align-items: center;
     justify-content: flex-start;
     border: 1px solid #DFE4EF;
-    padding: 15px 15px 16px 52px;
+    padding: 11px 15px 10px 51px;
     cursor: pointer;
+    position: relative;
+}
+
+.category__header::before {
+    content: '';
+    background-image: url('icons/arrow.svg');
+    width: 22px;
+    height: 22px;
+    border: 1px solid #D3D8DF;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    left: 14px;
+    top: 11px;
+}
+
+.category__header.collapsed::before {
+    transform: rotateX(180deg);
 }
 
 .category__name {
@@ -56,7 +91,7 @@ h1 {
     font-size: 15px;
 }
 
-.category__input input{
+.category__input input {
     font-weight: 500;
     font-size: 15px;
     border: none;
@@ -64,7 +99,7 @@ h1 {
     border-bottom: 1px solid #0066FF;
 }
 
-.blur{
+.blur {
     opacity: .5;
 }
 
@@ -73,14 +108,14 @@ h1 {
 }
 
 .items {
-    padding-left: 20px;
+    padding-left: 16px;
 }
 
 .item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 9px 15px 11px;
+    padding: 4px 14px 4px;
     margin-top: -1px;
     border: 1px solid #DFE4EF;
 }
@@ -125,3 +160,7 @@ h1 {
 .uncategorizedItems {
     padding-top: 14px;
 }
+
+/*.sortable-ghost{*/
+/*    border-top: 5px solid blue;*/
+/*}*/

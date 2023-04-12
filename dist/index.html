@@ -15,14 +15,17 @@
 <div class="container">
     <h1>Документы</h1>
     <!-- Категории -->
-    <input class="search-input" type="text" placeholder="Поиск" data-bind="value: searchQuery, valueUpdate: 'input'"/>
+    <div class="search">
+        <input class="search__input" type="text" placeholder="Поиск"
+               data-bind="value: searchQuery, valueUpdate: 'input'"/>
+    </div>
 
     <div class="categories" data-bind="foreach: categories">
         <div class="category"
              data-bind="visible: $root.isMatch($data), sortableList: { onMove: $root.moveItemBetweenCategories }, attr: { 'data-category-id': id }">
 
 
-            <div class="category__header" data-bind="click: function() { isCollapsed(!isCollapsed()) }">
+            <div class="category__header" data-bind="click: function() { isCollapsed(!isCollapsed()) }, class: isCollapsed() && 'collapsed'">
                 <div class="category__name" data-bind="ifnot: isEditing">
                     <span data-bind="text: name"></span>
                 </div>
@@ -43,7 +46,8 @@
 
             <!-- Элементы -->
             <div class="items"
-                 data-bind="foreach: items, visible: !isCollapsed(), sortableList: { onMove: $root.moveItemBetweenCategories }">
+                 data-bind="foreach: items, visible: !isCollapsed(), sortableList: { onMove: $root.moveItemBetweenCategories }, ondragover: $root.allowDrop, ondragleave: $root.removeHighlight, ondrop: $root.removeHighlight">
+
                 <div class="item"
                      data-bind="visible: $root.isMatch($data), attr: { 'data-id': id }">
 
@@ -70,7 +74,8 @@
     </div>
 
     <!-- Неотсортированные элементы -->
-    <div class="uncategorizedItems" data-bind="foreach: uncategorizedItems, attr: { 'data-category-id': 0 }">
+    <div class="uncategorizedItems"
+         data-bind="foreach: uncategorizedItems, sortableList: { onMove: $root.moveItemBetweenCategories }, ondragover: $root.allowDrop, ondragleave: $root.removeHighlight, ondrop: $root.removeHighlight">
         <div class="item" data-bind="visible: $root.isMatch($data), attr: { 'data-id': id }">
             <div class="item__name" data-bind="ifnot: isEditing">
                 <span data-bind="text: name"></span>

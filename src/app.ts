@@ -76,6 +76,7 @@ class AppViewModel {
 
         event.preventDefault();
         event.dataTransfer!.dropEffect = 'move';
+
     }
 
     changeContent = (item: Item | Category, event: MouseEvent) => {
@@ -110,7 +111,7 @@ class AppViewModel {
 
     isMatch = (item: Item | Category): boolean => {
         const searchText = this.searchQuery().toLowerCase();
-        return item.name().toLowerCase().includes(searchText);
+        return item.name().toLowerCase().includes(searchText) || item instanceof Category && item.items().some(i => i.name().toLowerCase().includes(searchText));
     }
 
     findCategoryById(id: number): Category | undefined {
@@ -132,7 +133,6 @@ class AppViewModel {
         const toCategoryItems = toCategoryId === 0 ? this.uncategorizedItems : this.findCategoryById(toCategoryId)?.items;
 
         if (fromCategoryItems && toCategoryItems) {
-            // Sortable.utils.move(fromCategoryItems, toCategoryItems, ({ from: oldIndex, to: newIndex }));
 
             // Обновление parentId у перемещенного элемента
             item.parentId = toCategoryId;
