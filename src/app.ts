@@ -2,12 +2,6 @@ import * as ko from 'knockout';
 // @ts-ignore
 import {Sortable, SortableEvent} from 'sortablejs';
 
-
-// 2. Действия должны быть плавными.
-
-// * Перетаскивать элементы в списке можно при клике на кнопку *Переместить*
-// https://monosnap.com/file/FkDR93Ek6f3cGf0PpkRkCNAOnjGrya
-
 class Item {
     name: ko.Observable<string>;
     parentId: number;
