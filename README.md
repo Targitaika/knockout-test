@@ -1,4 +1,4 @@
 # knockout-test
-Build - npm runbuild
+Build - npm run build
 
 Run - npm run start
