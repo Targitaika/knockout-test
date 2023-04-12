@@ -2,6 +2,12 @@ import * as ko from 'knockout';
 // @ts-ignore
 import {Sortable, SortableEvent} from 'sortablejs';
 
+
+// 2. Действия должны быть плавными.
+
+// * Перетаскивать элементы в списке можно при клике на кнопку *Переместить*
+// https://monosnap.com/file/FkDR93Ek6f3cGf0PpkRkCNAOnjGrya
+
 class Item {
     name: ko.Observable<string>;
     parentId: number;
@@ -76,7 +82,6 @@ class AppViewModel {
 
         event.preventDefault();
         event.dataTransfer!.dropEffect = 'move';
-
     }
 
     changeContent = (item: Item | Category, event: MouseEvent) => {
@@ -107,9 +112,15 @@ class AppViewModel {
     }
 
     toggleDraggable = (item: Item | Category, event: MouseEvent) => {
-        console.log('toggleDraggable', item, event);
         event.stopPropagation();
         item.isDraggable(!item.isDraggable());
+
+        const itemId = item instanceof Item ? item.id : item.items()[0].id;
+        const listItem = document.querySelector(`[data-id="${itemId}"]`);
+
+        if (listItem) {
+            listItem.classList.toggle("no-drag");
+        }
     }
 
     isMatch = (item: Item | Category): boolean => {
@@ -136,7 +147,6 @@ class AppViewModel {
         const toCategoryItems = toCategoryId === 0 ? this.uncategorizedItems : this.findCategoryById(toCategoryId)?.items;
 
         if (fromCategoryItems && toCategoryItems) {
-
             // Обновление parentId у перемещенного элемента
             item.parentId = toCategoryId;
         }
@@ -146,15 +156,21 @@ class AppViewModel {
         const categories = document.querySelectorAll(".category .items, .uncategorizedItems");
         categories.forEach((element) => {
             new Sortable(element, {
-                group: "items",
+                group: "shared",
                 animation: 150,
-                filter: ".js-remove, .js-ignore",
-                onEnd: (event: SortableEvent) => {
-                    const fromCategoryId = parseInt(event.from.parentElement!.dataset.categoryId);
-                    const toCategoryId = parseInt(event.to.parentElement!.dataset.categoryId);
+                filter: ".no-drag",
+                onStart: (event: SortableEvent) => {
                     const draggedItem = this.findItemById(parseInt(event.item.dataset.id));
+                    if (!draggedItem || !draggedItem.isDraggable()) {
+                        event.preventDefault();
+                    }
+                },
+                onEnd: (event: SortableEvent) => {
+                    const draggedItem = this.findItemById(parseInt(event.item.dataset.id));
+                    const fromCategoryId = parseInt(event.from.parentElement!.dataset.categoryId || '0');
+                    const toCategoryId = parseInt(event.to.parentElement!.dataset.categoryId || '0');
 
-                    if (draggedItem) {
+                    if (draggedItem && draggedItem.isDraggable()) {
                         if (fromCategoryId !== toCategoryId) {
                             this.moveItemBetweenCategories(draggedItem, fromCategoryId, toCategoryId);
                         }
@@ -163,26 +179,30 @@ class AppViewModel {
             });
         });
     };
-
     initializeCategoriesSortable = () => {
         console.log('initializeCategoriesSortable')
         new Sortable(document.querySelector('.categories')!, {
             group: 'categories',
             animation: 150,
             filter: '.js-remove, .js-ignore',
+            onStart: (event: SortableEvent) => {
+                const draggedCategory = this.findCategoryById(parseInt(event.item.dataset.id));
+                if (!draggedCategory || !draggedCategory.isDraggable()) {
+                    event.preventDefault();
+                }
+            },
             onEnd: (event: SortableEvent) => {
                 const newIndex = event.newIndex;
                 const oldIndex = event.oldIndex;
                 const draggedCategory = this.findCategoryById(parseInt(event.item.dataset.id));
 
-                if (draggedCategory) {
+                if (draggedCategory && draggedCategory.isDraggable()) {
                     this.categories.splice(oldIndex, 1);
                     this.categories.splice(newIndex, 0, draggedCategory);
                 }
             },
         });
     };
-
     initSortable() {
         this.initializeCategoriesSortable();
         this.initializeItemsSortable();
