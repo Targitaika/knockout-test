@@ -140,7 +140,7 @@ class AppViewModel {
     }
 
     initializeItemsSortable = () => {
-        const categories = document.querySelectorAll(".category .items");
+        const categories = document.querySelectorAll(".category .items, .uncategorizedItems");
         categories.forEach((element) => {
             new Sortable(element, {
                 group: "items",

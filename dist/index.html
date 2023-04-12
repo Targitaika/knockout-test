@@ -22,7 +22,7 @@
              data-bind="visible: $root.isMatch($data), sortableList: { onMove: $root.moveItemBetweenCategories }, attr: { 'data-category-id': id }">
 
 
-        <div class="category__header" data-bind="click: function() { isCollapsed(!isCollapsed()) }">
+            <div class="category__header" data-bind="click: function() { isCollapsed(!isCollapsed()) }">
                 <div class="category__name" data-bind="ifnot: isEditing">
                     <span data-bind="text: name"></span>
                 </div>
@@ -42,11 +42,12 @@
             </div>
 
             <!-- Элементы -->
-            <div class="items" data-bind="foreach: items, visible: !isCollapsed(), sortableList: { onMove: $root.moveItemBetweenCategories }">
+            <div class="items"
+                 data-bind="foreach: items, visible: !isCollapsed(), sortableList: { onMove: $root.moveItemBetweenCategories }">
                 <div class="item"
                      data-bind="visible: $root.isMatch($data), attr: { 'data-id': id }">
 
-                <div class="item__name" data-bind="ifnot: isEditing">
+                    <div class="item__name" data-bind="ifnot: isEditing">
                         <span data-bind="text: name"></span>
                     </div>
                     <div class="item__input" data-bind="if: isEditing">
@@ -69,10 +70,8 @@
     </div>
 
     <!-- Неотсортированные элементы -->
-    <div class="uncategorizedItems" data-bind="foreach: uncategorizedItems">
-        <div class="item"
-             draggable="true"
-             data-bind="visible: $root.isMatch($data), ondragstart: $root.startDragging, ondragover: $root.allowDrop, ondrop: $root.drop">
+    <div class="uncategorizedItems" data-bind="foreach: uncategorizedItems, attr: { 'data-category-id': 0 }">
+        <div class="item" data-bind="visible: $root.isMatch($data), attr: { 'data-id': id }">
             <div class="item__name" data-bind="ifnot: isEditing">
                 <span data-bind="text: name"></span>
             </div>
@@ -81,16 +80,12 @@
             </div>
             <div class="buttons">
                 <button data-bind="click: $root.changeContent">
-                    <img src="icons/change.svg" alt="Change" width="12"
-                         height="12"></button>
+                    <img src="icons/change.svg" alt="Change" width="12" height="12"></button>
                 <button data-bind="click: $root.deleteItem">
-                    <img src="icons/delete.svg" alt="Delete" width="12"
-                         height="12">
+                    <img src="icons/delete.svg" alt="Delete" width="12" height="12">
                 </button>
                 <button data-bind="click: $root.toggleDraggable, css: { blur: !isDraggable() }">
-                    <img src="icons/drag.svg" alt="Drag" width="12"
-                         height="12"
-                    >
+                    <img src="icons/drag.svg" alt="Drag" width="12" height="12">
                 </button>
             </div>
         </div>
