@@ -19,6 +19,8 @@
     "webpack-dev-server": "^4.13.2"
   },
   "dependencies": {
-    "knockout-dragdrop": "^2.6.1"
+    "@shopify/draggable": "^1.0.0-beta.8",
+    "knockout-dragdrop": "^2.6.1",
+    "sortablejs": "^1.15.0"
   }
 }

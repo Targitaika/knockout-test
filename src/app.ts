@@ -1,16 +1,21 @@
 import * as ko from 'knockout';
+// @ts-ignore
+import {Sortable, SortableEvent} from 'sortablejs';
 
 class Item {
     name: ko.Observable<string>;
-    parent: Category | null;
+    parentId: number;
     isEditing: ko.Observable<boolean>;
     isDraggable: ko.Observable<boolean>;
+    id: number;
+    static lastId = 0;
 
-    constructor(name: string, parent: Category | null) {
+    constructor(name: string, parentId: number) {
         this.name = ko.observable(name);
-        this.parent = parent;
+        this.parentId = parentId;
         this.isEditing = ko.observable(false);
         this.isDraggable = ko.observable(true);
+        this.id = ++Item.lastId;
     }
 }
 
@@ -22,15 +27,17 @@ class Category {
     isDraggable: ko.Observable<boolean>;
     isCollapsed: ko.Observable<boolean>;
     parent: any;
+    id: number;
 
-    constructor(name: string) {
+    constructor(name: string, id: number) {
         this.name = ko.observable(name);
         this.items = ko.observableArray<Item>([]);
         this.isVisible = ko.observable(true);
         this.isEditing = ko.observable(false);
         this.isDraggable = ko.observable(true);
         this.isCollapsed = ko.observable(false);
-        this.parent = []
+        this.parent = [];
+        this.id = id;
     }
 }
 
@@ -42,25 +49,20 @@ class AppViewModel {
 
 
     constructor() {
-        const tempCategory1 = new Category('Обязательные для всех');
-        const tempCategory2 = new Category('Обязательные для трудоустройства');
-        const tempCategory3 = new Category('Специальные');
-        const uncategorizedItems = new Category('UncategorizedItems');
+        const tempCategory1 = new Category('Обязательные для всех', 1);
+        const tempCategory2 = new Category('Обязательные для трудоустройства', 2);
+        const tempCategory3 = new Category('Специальные', 3);
+        const uncategorizedItems = new Category('UncategorizedItems', 4);
 
-        tempCategory1.items.push(new Item('Паспорт', tempCategory1));
-        tempCategory1.items.push(new Item('ИНН', tempCategory1));
+        tempCategory1.items.push(new Item('Паспорт', tempCategory1.id));
+        tempCategory1.items.push(new Item('ИНН', tempCategory1.id));
 
-        tempCategory2.items.push(new Item('Item 2.1', tempCategory2));
-        //
-        // uncategorizedItems.items.push(new Item("Тестовое задание кандидата", uncategorizedItems));
-        // uncategorizedItems.items.push(new Item("Трудовой договор", uncategorizedItems));
-        // uncategorizedItems.items.push(new Item("Мед. книжка", uncategorizedItems));
+        tempCategory2.items.push(new Item('Item 2.1', tempCategory2.id));
 
-        // console.log('contstructor', this.categories.remove);
         this.uncategorizedItems = ko.observableArray([
-            new Item("Тестовое задание кандидата", uncategorizedItems),
-            new Item("Трудовой договор", uncategorizedItems),
-            new Item("Мед. книжка", uncategorizedItems),
+            new Item("Тестовое задание кандидата", uncategorizedItems.id),
+            new Item("Трудовой договор", uncategorizedItems.id),
+            new Item("Мед. книжка", uncategorizedItems.id),
         ]);
 
         this.categories = ko.observableArray([tempCategory1, tempCategory2, tempCategory3]);
@@ -69,70 +71,11 @@ class AppViewModel {
         this.searchQuery = ko.observable('');
     }
 
-    startDragging = (item: Item | Category, event: DragEvent, ...arg: any) => {
-        console.log('startDragging', event, arg)
-        event.dataTransfer!.setData('application/json', JSON.stringify(item));
-        event.dataTransfer!.effectAllowed = 'move';
-
-        this.draggedItem = item;
-    }
-
     allowDrop = (item: Item | Category, event: DragEvent) => {
         console.log('allowDrop')
 
         event.preventDefault();
         event.dataTransfer!.dropEffect = 'move';
-    }
-
-    drop = (target: Item | Category, event: DragEvent, ...arg: any) => {
-        console.log('drop', event, arg);
-        event.preventDefault();
-
-        if (this.draggedItem === target) {
-            return;
-        }
-
-        const isDraggedCategory = this.draggedItem instanceof Category;
-        const isTargetCategory = target instanceof Category;
-
-        if (isDraggedCategory && !isTargetCategory) {
-            return;
-        }
-
-        let targetIndex;
-        let draggedIndex;
-
-        if (isTargetCategory) {
-            targetIndex = this.categories().indexOf(target as Category);
-            draggedIndex = isDraggedCategory
-                ? this.categories().indexOf(this.draggedItem as Category)
-                : this.draggedItem!.parent.items().indexOf(this.draggedItem as Item);
-        } else {
-            targetIndex = target.parent!.items().indexOf(target);
-            draggedIndex = this.draggedItem!.parent.items().indexOf(this.draggedItem);
-        }
-
-        if (draggedIndex > -1) {
-            if (isDraggedCategory) {
-                this.categories.splice(draggedIndex, 1);
-            } else {
-                this.draggedItem!.parent.items.splice(draggedIndex, 1);
-            }
-        }
-
-        if (isTargetCategory) {
-            if (isDraggedCategory) {
-                this.categories.splice(targetIndex, 0, this.draggedItem as Category);
-            } else {
-                (target as Category).items.push(this.draggedItem as Item);
-                this.draggedItem!.parent = target as Category;
-            }
-        } else {
-            target.parent!.items.splice(targetIndex, 0, this.draggedItem as Item);
-            this.draggedItem!.parent = target.parent;
-        }
-
-        this.draggedItem = null;
     }
 
     changeContent = (item: Item | Category, event: MouseEvent) => {
@@ -152,10 +95,10 @@ class AppViewModel {
     deleteItem = (item: Item, event: MouseEvent) => {
         console.log('deleteItem', item, event)
         event.stopPropagation();
-        if (item.parent!.name() === 'UncategorizedItems') {
+        if (item.parentId === 0) {
             this.uncategorizedItems.remove(item);
         } else {
-            item.parent!.items.remove(item);
+            this.findCategoryById(item.parentId)!.items.remove(item);
         }
     }
 
@@ -169,6 +112,87 @@ class AppViewModel {
         const searchText = this.searchQuery().toLowerCase();
         return item.name().toLowerCase().includes(searchText);
     }
+
+    findCategoryById(id: number): Category | undefined {
+        return this.categories().find(category => category.id === id);
+    }
+
+    findItemById(id: number): Item | undefined {
+        const allItems = this.categories()
+            .map(category => category.items())
+            .flat()
+            .concat(this.uncategorizedItems());
+
+        return allItems.find(item => item.id === id);
+    }
+
+    moveItemBetweenCategories(item: Item, fromCategoryId: number, toCategoryId: number) {
+        console.log('moveItemBetweenCategories');
+        // Удаление элемента из старой категории или из списка uncategorizedItems
+        if (fromCategoryId === 0) {
+            this.uncategorizedItems.remove(item);
+        } else {
+            const fromCategory = this.findCategoryById(fromCategoryId);
+            if (fromCategory) {
+                fromCategory.items.remove(item);
+            }
+        }
+
+        // Добавление элемента в новую категорию или в список uncategorizedItems
+        if (toCategoryId === 0) {
+            this.uncategorizedItems.push(item);
+        } else {
+            const toCategory = this.findCategoryById(toCategoryId);
+            if (toCategory) {
+                toCategory.items.push(item);
+            }
+        }
+
+        // Обновление parentId у перемещенного элемента
+        item.parentId = toCategoryId;
+    }
+
+    initializeItemsSortable = (element: HTMLElement, category: Category) => {
+        console.log('initializeItemsSortable')
+        new Sortable(element, {
+            group: 'items',
+            animation: 150,
+            filter: '.js-remove, .js-ignore',
+            onEnd: (event: SortableEvent) => {
+                const fromCategoryId = parseInt(event.from.dataset.categoryId);
+                const toCategoryId = parseInt(event.to.dataset.categoryId);
+                const draggedItem = this.findItemById(parseInt(event.item.dataset.id));
+
+                if (draggedItem) {
+                    if (fromCategoryId !== toCategoryId) {
+                        this.moveItemBetweenCategories(draggedItem, fromCategoryId, toCategoryId);
+                    }
+                }
+            },
+        });
+    };
+
+    initializeCategoriesSortable = () => {
+        console.log('initializeCategoriesSortable')
+        new Sortable(document.querySelector('.categories')!, {
+            group: 'categories',
+            animation: 150,
+            filter: '.js-remove, .js-ignore',
+            onEnd: (event: SortableEvent) => {
+                const newIndex = event.newIndex;
+                const oldIndex = event.oldIndex;
+                const draggedCategory = this.findCategoryById(parseInt(event.item.dataset.id));
+
+                if (draggedCategory) {
+                    this.categories.splice(oldIndex, 1);
+                    this.categories.splice(newIndex, 0, draggedCategory);
+                }
+            },
+        });
+    };
+
 }
 
-ko.applyBindings(new AppViewModel());
+const viewModel = new AppViewModel();
+ko.applyBindings(viewModel);
+viewModel.initializeCategoriesSortable();
