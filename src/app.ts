@@ -27,6 +27,7 @@ class Item {
 
 class Category {
     name: ko.Observable<string>;
+    text: ko.Observable<string>;
     items: ko.ObservableArray<Item>;
     isVisible: ko.Observable<boolean>;
     isEditing: ko.Observable<boolean>;
@@ -35,8 +36,9 @@ class Category {
     parent: any;
     id: number;
 
-    constructor(name: string, id: number) {
+    constructor(name: string, text: string, id: number) {
         this.name = ko.observable(name);
+        this.text = ko.observable(text);
         this.items = ko.observableArray<Item>([]);
         this.isVisible = ko.observable(true);
         this.isEditing = ko.observable(false);
@@ -55,10 +57,10 @@ class AppViewModel {
 
 
     constructor() {
-        const tempCategory1 = new Category('Обязательные для всех', 1);
-        const tempCategory2 = new Category('Обязательные для трудоустройства', 2);
-        const tempCategory3 = new Category('Специальные', 3);
-        const uncategorizedItems = new Category('UncategorizedItems', 4);
+        const tempCategory1 = new Category('Обязательные для всех', 'Документы, обязательные для всех сотрудников без исключения', 1);
+        const tempCategory2 = new Category('Обязательные для трудоустройства', 'Документы, без которых невозможно трудоустройство человека на какую бы то ни было должность в компании вне зависимости от граж', 2);
+        const tempCategory3 = new Category('Специальные', '', 3);
+        const uncategorizedItems = new Category('UncategorizedItems', '', 4);
 
         tempCategory1.items.push(new Item('Паспорт', tempCategory1.id));
         tempCategory1.items.push(new Item('ИНН', tempCategory1.id));
@@ -203,6 +205,7 @@ class AppViewModel {
             },
         });
     };
+
     initSortable() {
         this.initializeCategoriesSortable();
         this.initializeItemsSortable();

@@ -13,7 +13,14 @@
 </head>
 <body>
 <div class="container">
-    <h1>Документы</h1>
+    <div class="header-block">
+        <h1>Документы</h1>
+        <div class="header-block_buttons">
+            <button class="header-block_button header-block_button_achieve"></button>
+            <button class="header-block_button">Новый тип</button>
+            <button class="header-block_button">Новый документ</button>
+        </div>
+    </div>
     <!-- Категории -->
     <div class="search">
         <input class="search__input" type="text" placeholder="Поиск"
@@ -37,6 +44,7 @@
                 <div class="category__input" data-bind="if: isEditing">
                     <input type="text" data-bind="value: name">
                 </div>
+                <div class="category__text" data-bind="text: text"></div>
                 <div class="buttons">
                     <button data-bind="click: $root.changeContent">
                         <img src="icons/change.svg" alt="Change" width="12" height="12"></button>

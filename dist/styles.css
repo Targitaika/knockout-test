@@ -11,7 +11,7 @@ body {
 
 .container {
     max-width: 1190px;
-    padding: 17px 22px;
+    padding: 17px 8px 17px 22px;
     box-sizing: border-box;
 }
 
@@ -19,6 +19,61 @@ h1 {
     font-weight: 500;
     font-size: 22px;
     margin-bottom: 20px;
+}
+
+.header-block {
+    display: flex;
+}
+
+.header-block_buttons {
+    display: flex;
+    margin-left: auto;
+    padding-top: 8px;
+}
+
+.header-block_button {
+    font-size: 12px;
+    border: 1px solid #D3D8DF;
+    border-radius: 50px;
+    margin-left: 10px;
+    height: 30px;
+    padding: 8px 20px 9px 35px;
+    position: relative;
+    display: block;
+    cursor: pointer;
+    box-sizing: border-box;
+    background-color: transparent;
+}
+
+.header-block_button::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 7px;
+    width: 14px;
+    height: 14px;
+    background-image: url('icons/plus.svg');
+    background-repeat: no-repeat;
+}
+
+.header-block_button_achieve {
+    border-radius: 50%;
+}
+
+.header-block_button_achieve {
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: block;
+}
+
+.header-block_button_achieve::before {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-image: url('icons/mark.svg');
+    background-position: center;
 }
 
 .search {
@@ -54,12 +109,13 @@ h1 {
     left: 1px;
     top: 12px;
 }
-.search__reset{
+
+.search__reset {
     position: absolute;
     top: calc(50% - 10px);
     right: 0;
     background: none;
-    border:none;
+    border: none;
     width: 20px;
     height: 20px;
     padding: 0;
@@ -101,6 +157,8 @@ h1 {
 .category__name {
     font-weight: 500;
     font-size: 15px;
+    flex-shrink: 1;
+    white-space: nowrap;
 }
 
 .category__input input {
@@ -109,6 +167,15 @@ h1 {
     border: none;
     outline: none;
     border-bottom: 1px solid #0066FF;
+}
+
+.category__text {
+    font-size: 11px;
+    color: #8E9CBB;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-left: 15px;
+    flex-grow: 1;
 }
 
 .blur {
