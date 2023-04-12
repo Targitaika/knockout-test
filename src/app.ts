@@ -126,49 +126,40 @@ class AppViewModel {
         return allItems.find(item => item.id === id);
     }
 
-    moveItemBetweenCategories(item: Item, fromCategoryId: number, toCategoryId: number) {
-        console.log('moveItemBetweenCategories');
+    moveItemBetweenCategories(item: Item, fromCategoryId: number, toCategoryId: number, oldIndex: number, newIndex: number) {
         // Удаление элемента из старой категории или из списка uncategorizedItems
-        if (fromCategoryId === 0) {
-            this.uncategorizedItems.remove(item);
-        } else {
-            const fromCategory = this.findCategoryById(fromCategoryId);
-            if (fromCategory) {
-                fromCategory.items.remove(item);
-            }
-        }
+        const fromCategoryItems = fromCategoryId === 0 ? this.uncategorizedItems : this.findCategoryById(fromCategoryId)?.items;
+        const toCategoryItems = toCategoryId === 0 ? this.uncategorizedItems : this.findCategoryById(toCategoryId)?.items;
 
-        // Добавление элемента в новую категорию или в список uncategorizedItems
-        if (toCategoryId === 0) {
-            this.uncategorizedItems.push(item);
-        } else {
-            const toCategory = this.findCategoryById(toCategoryId);
-            if (toCategory) {
-                toCategory.items.push(item);
-            }
-        }
+        if (fromCategoryItems && toCategoryItems) {
+            // Sortable.utils.move(fromCategoryItems, toCategoryItems, ({ from: oldIndex, to: newIndex }));
 
-        // Обновление parentId у перемещенного элемента
-        item.parentId = toCategoryId;
+            // Обновление parentId у перемещенного элемента
+            item.parentId = toCategoryId;
+        }
     }
 
-    initializeItemsSortable = (element: HTMLElement, category: Category) => {
-        console.log('initializeItemsSortable')
-        new Sortable(element, {
-            group: 'items',
-            animation: 150,
-            filter: '.js-remove, .js-ignore',
-            onEnd: (event: SortableEvent) => {
-                const fromCategoryId = parseInt(event.from.dataset.categoryId);
-                const toCategoryId = parseInt(event.to.dataset.categoryId);
-                const draggedItem = this.findItemById(parseInt(event.item.dataset.id));
+    initializeItemsSortable = () => {
+        const categories = document.querySelectorAll(".category .items");
+        categories.forEach((element) => {
+            new Sortable(element, {
+                group: "items",
+                animation: 150,
+                filter: ".js-remove, .js-ignore",
+                onEnd: (event: SortableEvent) => {
+                    const fromCategoryId = parseInt(event.from.parentElement!.dataset.categoryId);
+                    const toCategoryId = parseInt(event.to.parentElement!.dataset.categoryId);
+                    const oldIndex = event.oldIndex;
+                    const newIndex = event.newIndex;
+                    const draggedItem = this.findItemById(parseInt(event.item.dataset.id));
 
-                if (draggedItem) {
-                    if (fromCategoryId !== toCategoryId) {
-                        this.moveItemBetweenCategories(draggedItem, fromCategoryId, toCategoryId);
+                    if (draggedItem) {
+                        if (fromCategoryId !== toCategoryId) {
+                            this.moveItemBetweenCategories(draggedItem, fromCategoryId, toCategoryId, oldIndex, newIndex);
+                        }
                     }
-                }
-            },
+                },
+            });
         });
     };
 
@@ -191,8 +182,13 @@ class AppViewModel {
         });
     };
 
+    initSortable() {
+        this.initializeCategoriesSortable();
+        this.initializeItemsSortable();
+    }
+
 }
 
-const viewModel = new AppViewModel();
-ko.applyBindings(viewModel);
-viewModel.initializeCategoriesSortable();
+const appViewModel = new AppViewModel();
+ko.applyBindings(appViewModel);
+appViewModel.initSortable();
