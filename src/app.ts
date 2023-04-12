@@ -126,7 +126,7 @@ class AppViewModel {
         return allItems.find(item => item.id === id);
     }
 
-    moveItemBetweenCategories(item: Item, fromCategoryId: number, toCategoryId: number, oldIndex: number, newIndex: number) {
+    moveItemBetweenCategories(item: Item, fromCategoryId: number, toCategoryId: number) {
         // Удаление элемента из старой категории или из списка uncategorizedItems
         const fromCategoryItems = fromCategoryId === 0 ? this.uncategorizedItems : this.findCategoryById(fromCategoryId)?.items;
         const toCategoryItems = toCategoryId === 0 ? this.uncategorizedItems : this.findCategoryById(toCategoryId)?.items;
@@ -149,13 +149,11 @@ class AppViewModel {
                 onEnd: (event: SortableEvent) => {
                     const fromCategoryId = parseInt(event.from.parentElement!.dataset.categoryId);
                     const toCategoryId = parseInt(event.to.parentElement!.dataset.categoryId);
-                    const oldIndex = event.oldIndex;
-                    const newIndex = event.newIndex;
                     const draggedItem = this.findItemById(parseInt(event.item.dataset.id));
 
                     if (draggedItem) {
                         if (fromCategoryId !== toCategoryId) {
-                            this.moveItemBetweenCategories(draggedItem, fromCategoryId, toCategoryId, oldIndex, newIndex);
+                            this.moveItemBetweenCategories(draggedItem, fromCategoryId, toCategoryId);
                         }
                     }
                 },
