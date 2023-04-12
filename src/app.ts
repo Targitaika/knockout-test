@@ -92,6 +92,9 @@ class AppViewModel {
             this.categories.remove(category);
         }
     }
+    resetSearch = () => {
+        this.searchQuery('');
+    }
 
     deleteItem = (item: Item, event: MouseEvent) => {
         console.log('deleteItem', item, event)
